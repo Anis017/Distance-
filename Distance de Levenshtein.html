@@ -121,7 +121,7 @@
             background: #f8fafc;
         }
 
-        .input-group textarea:focus {
+        .input-group input:focus {
             outline: none;
             border-color: #667eea;
             background: white;
@@ -329,24 +329,24 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>⚡ Distance de Levenshtein</h1>
-            <p>Mesurer l'écart entre intention et exécution</p>
+            <h1>📏 Distance de Levenshtein</h1>
+            <p>Calculer la distance entre deux mots</p>
         </div>
         
         <div class="content">
             <div class="info-box">
-                <strong>💡 À propos :</strong> La distance de Levenshtein calcule le nombre minimum d'opérations (insertion, suppression, substitution) nécessaires pour transformer une chaîne en une autre. Parfait pour quantifier l'écart entre votre intention initiale et son exécution finale !
+                <strong>💡 Comment ça marche :</strong> La distance de Levenshtein calcule le nombre minimum d'opérations (insertion ➕, suppression ❌, substitution 🔄) nécessaires pour transformer un mot en un autre. Plus la distance est faible, plus les mots sont similaires !
             </div>
 
             <div class="input-section">
                 <div class="input-group">
-                    <label for="intention">🎯 Intention (texte original)</label>
-                    <textarea id="intention" placeholder="Tapez votre intention ici..."></textarea>
+                    <label for="word1">📝 Premier mot</label>
+                    <input type="text" id="word1" placeholder="Entrez le premier mot..." style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 18px; font-family: 'Courier New', monospace; transition: all 0.3s ease; background: #f8fafc;">
                 </div>
                 
                 <div class="input-group">
-                    <label for="execution">🎬 Exécution (texte final)</label>
-                    <textarea id="execution" placeholder="Tapez l'exécution ici..."></textarea>
+                    <label for="word2">📝 Deuxième mot</label>
+                    <input type="text" id="word2" placeholder="Entrez le deuxième mot..." style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 18px; font-family: 'Courier New', monospace; transition: all 0.3s ease; background: #f8fafc;">
                 </div>
             </div>
 
@@ -374,15 +374,15 @@
                 <div class="analysis">
                     <h3>📊 Analyse comparative</h3>
                     <div class="analysis-item">
-                        <span class="analysis-label">Longueur de l'intention:</span>
-                        <span class="analysis-value" id="intention-length">0 caractères</span>
+                        <span class="analysis-label">Longueur du premier mot:</span>
+                        <span class="analysis-value" id="word1-length">0 caractères</span>
                     </div>
                     <div class="analysis-item">
-                        <span class="analysis-label">Longueur de l'exécution:</span>
-                        <span class="analysis-value" id="execution-length">0 caractères</span>
+                        <span class="analysis-label">Longueur du deuxième mot:</span>
+                        <span class="analysis-value" id="word2-length">0 caractères</span>
                     </div>
                     <div class="analysis-item">
-                        <span class="analysis-label">Efficacité de l'exécution:</span>
+                        <span class="analysis-label">Similarité des mots:</span>
                         <span class="analysis-value" id="efficiency">Non évaluée</span>
                     </div>
                 </div>
@@ -391,15 +391,15 @@
     </div>
 
     <script>
-        const intentionInput = document.getElementById('intention');
-        const executionInput = document.getElementById('execution');
+        const word1Input = document.getElementById('word1');
+        const word2Input = document.getElementById('word2');
         const resultsDiv = document.getElementById('results');
         const distanceSpan = document.getElementById('distance');
         const similaritySpan = document.getElementById('similarity');
         const modificationsSpan = document.getElementById('modifications');
         const operationsList = document.getElementById('operations-list');
-        const intentionLengthSpan = document.getElementById('intention-length');
-        const executionLengthSpan = document.getElementById('execution-length');
+        const word1LengthSpan = document.getElementById('word1-length');
+        const word2LengthSpan = document.getElementById('word2-length');
         const efficiencySpan = document.getElementById('efficiency');
 
         function calculateLevenshtein(str1, str2) {
@@ -500,16 +500,16 @@
         }
 
         function updateResults() {
-            var intention = intentionInput.value;
-            var execution = executionInput.value;
+            var word1 = word1Input.value.trim();
+            var word2 = word2Input.value.trim();
 
-            if (!intention && !execution) {
+            if (!word1 && !word2) {
                 resultsDiv.classList.remove('show');
                 return;
             }
 
-            var result = calculateLevenshtein(intention, execution);
-            var maxLength = Math.max(intention.length, execution.length);
+            var result = calculateLevenshtein(word1, word2);
+            var maxLength = Math.max(word1.length, word2.length);
             var similarity = maxLength > 0 ? 
                 ((maxLength - result.distance) / maxLength * 100).toFixed(1) : 100;
 
@@ -519,19 +519,19 @@
             animateCounter(modificationsSpan, result.operations.filter(function(op) { return op.type !== 'match'; }).length);
 
             // Mise à jour des analyses
-            intentionLengthSpan.textContent = intention.length + ' caractères';
-            executionLengthSpan.textContent = execution.length + ' caractères';
+            word1LengthSpan.textContent = word1.length + ' caractères';
+            word2LengthSpan.textContent = word2.length + ' caractères';
 
-            // Efficacité
+            // Similarité
             var efficiencyText, efficiencyClass;
             if (similarity > 80) {
-                efficiencyText = '🎯 Très fidèle';
+                efficiencyText = '🎯 Très similaires';
                 efficiencyClass = 'efficiency-high';
             } else if (similarity > 60) {
-                efficiencyText = '⚠️ Modérément fidèle';
+                efficiencyText = '⚠️ Moyennement similaires';
                 efficiencyClass = 'efficiency-medium';
             } else {
-                efficiencyText = '🚨 Peu fidèle';
+                efficiencyText = '🚨 Peu similaires';
                 efficiencyClass = 'efficiency-low';
             }
             
@@ -541,7 +541,7 @@
             // Opérations
             operationsList.innerHTML = result.operations.length > 0 ? 
                 result.operations.map(function(op, index) { return getOperationHTML(op, index); }).join('') :
-                '<div class="operation op-match">🎉 Aucune opération nécessaire - correspondance parfaite !</div>';
+                '<div class="operation op-match">🎉 Aucune opération nécessaire - mots identiques !</div>';
 
             resultsDiv.classList.add('show');
         }
@@ -576,8 +576,11 @@
         }
 
         var debouncedUpdate = debounce(updateResults, 300);
-        intentionInput.addEventListener('input', debouncedUpdate);
-        executionInput.addEventListener('input', debouncedUpdate);
+        word1Input.addEventListener('input', debouncedUpdate);
+        word2Input.addEventListener('input', debouncedUpdate);
+
+        // Focus sur le premier champ au chargement
+        word1Input.focus();
 
         // Animation d'entrée
         setTimeout(function() {
